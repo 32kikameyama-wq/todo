@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATD - ARS TODO Management System</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/dashboard.css">
+    <link rel="stylesheet" href="src/styles/task.css">
+    <link rel="stylesheet" href="src/styles/team.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- ローディング画面 -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-spinner"></div>
+            <p>ATDシステムを読み込み中...</p>
+        </div>
+
+        <!-- ログイン画面 -->
+        <div id="login-screen" class="login-screen hidden">
+            <div class="login-container">
+                <div class="login-header">
+                    <h1>ATD</h1>
+                    <p>ARS TODO Management System</p>
+                </div>
+                <div class="login-form">
+                    <button id="google-login-btn" class="btn btn-primary">
+                        <i class="fab fa-google"></i>
+                        Googleでログイン
+                    </button>
+                    <button id="guest-login-btn" class="btn btn-secondary">
+                        <i class="fas fa-user"></i>
+                        ゲストとして続行
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- メインアプリケーション -->
+        <div id="main-app" class="main-app hidden">
+            <!-- ヘッダー -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 class="app-title">ATD</h1>
+                    <nav class="main-nav">
+                        <button class="nav-btn active" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            ダッシュボード
+                        </button>
+                        <button class="nav-btn" data-page="tasks">
+                            <i class="fas fa-tasks"></i>
+                            タスク管理
+                        </button>
+                        <button class="nav-btn" data-page="team" data-team-only>
+                            <i class="fas fa-users"></i>
+                            チーム
+                        </button>
+                        <button class="nav-btn" data-page="mindmap">
+                            <i class="fas fa-project-diagram"></i>
+                            マインドマップ
+                        </button>
+                    </nav>
+                </div>
+                <div class="header-right">
+                    <div class="view-mode-toggle">
+                        <button id="personal-view-btn" class="view-mode-btn active" data-mode="personal">
+                            <i class="fas fa-user"></i>
+                            個人
+                        </button>
+                        <button id="team-view-btn" class="view-mode-btn" data-mode="team">
+                            <i class="fas fa-users"></i>
+                            チーム
+                        </button>
+                    </div>
+                    <div class="user-info">
+                        <span id="user-name">ユーザー名</span>
+                        <button id="user-menu-btn" class="user-menu-btn">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- メインコンテンツ -->
+            <main class="app-main">
+                <!-- ダッシュボードページ -->
+                <div id="dashboard-page" class="page active">
+                    <div class="page-header">
+                        <h2>ダッシュボード</h2>
+                        <div class="page-actions">
+                            <select id="time-filter" class="filter-select">
+                                <option value="today">今日</option>
+                                <option value="week">今週</option>
+                                <option value="month">今月</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 個人ビュー -->
+                    <div id="personal-dashboard" class="dashboard-view active">
+                        <div class="dashboard-grid">
+                            <!-- 個人KPI -->
+                            <div class="kpi-card">
+                                <h3>個人パフォーマンス</h3>
+                                <div class="kpi-metrics">
+                                    <div class="metric">
+                                        <span class="value" id="personal-completion-rate">85%</span>
+                                        <span class="label">完了率</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="value" id="personal-tasks-completed">12</span>
+                                        <span class="label">完了タスク</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="value" id="personal-streak">5日</span>
+                                        <span class="label">連続達成</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 今日のフォーカス -->
+                            <div class="kpi-card focus-card">
+                                <h3>今日のフォーカス (3件)</h3>
+                                <div id="focus-tasks" class="focus-tasks">
+                                    <!-- フォーカスタスクがここに表示される -->
+                                </div>
+                            </div>
+
+                            <!-- 進捗グラフ -->
+                            <div class="kpi-card chart-card">
+                                <h3>進捗分析</h3>
+                                <canvas id="progress-chart"></canvas>
+                            </div>
+
+                            <!-- 時間分析 -->
+                            <div class="kpi-card chart-card">
+                                <h3>時間分析</h3>
+                                <canvas id="time-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- チームビュー -->
+                    <div id="team-dashboard" class="dashboard-view">
+                        <div class="dashboard-grid">
+                            <!-- チームKPI -->
+                            <div class="kpi-card">
+                                <h3>チーム全体</h3>
+                                <div class="kpi-metrics">
+                                    <div class="metric">
+                                        <span class="value" id="team-completion-rate">78%</span>
+                                        <span class="label">完了率</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="value" id="team-tasks-completed">45</span>
+                                        <span class="label">完了タスク</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="value" id="team-avg-lead-time">2.3日</span>
+                                        <span class="label">平均リードタイム</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- チームフォーカス -->
+                            <div class="kpi-card focus-card">
+                                <h3>チームフォーカス (5件)</h3>
+                                <div id="team-focus-tasks" class="focus-tasks">
+                                    <!-- チームフォーカスタスクがここに表示される -->
+                                </div>
+                            </div>
+
+                            <!-- チーム進捗グラフ -->
+                            <div class="kpi-card chart-card">
+                                <h3>チーム進捗分析</h3>
+                                <canvas id="team-progress-chart"></canvas>
+                            </div>
+
+                            <!-- チーム時間分析 -->
+                            <div class="kpi-card chart-card">
+                                <h3>チーム時間分析</h3>
+                                <canvas id="team-time-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タスク管理ページ -->
+                <div id="tasks-page" class="page">
+                    <div class="page-header">
+                        <h2>タスク管理</h2>
+                        <div class="page-actions">
+                            <button id="mindmap-breakdown-btn" class="btn btn-secondary">
+                                <i class="fas fa-project-diagram"></i>
+                                マインドマップ細分化
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-filters">
+                        <button id="add-task-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            タスク追加
+                        </button>
+                        <select id="task-priority-filter" class="filter-select">
+                            <option value="">全ての優先度</option>
+                            <option value="1">🔥 最高</option>
+                            <option value="2">⚡ 高</option>
+                            <option value="3">📝 中</option>
+                            <option value="4">📌 低</option>
+                        </select>
+                        <select id="task-status-filter" class="filter-select">
+                            <option value="">全てのステータス</option>
+                            <option value="pending">未着手</option>
+                            <option value="in_progress">進行中</option>
+                            <option value="completed">完了</option>
+                        </select>
+                    </div>
+                    
+                    <div id="task-list" class="task-list">
+                        <!-- タスクリストがここに表示される -->
+                    </div>
+                </div>
+
+                <!-- チームページ -->
+                <div id="team-page" class="page">
+                    <div class="page-header">
+                        <h2>チーム管理</h2>
+                        <div class="page-actions">
+                            <button id="create-team-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                チーム作成
+                            </button>
+                            <button id="invite-member-btn" class="btn btn-secondary">
+                                <i class="fas fa-user-plus"></i>
+                                メンバー招待
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="team-dashboard">
+                        <!-- チームKPI -->
+                        <div class="kpi-card team-overview">
+                            <h3>チーム全体</h3>
+                            <div class="kpi-metrics">
+                                <div class="metric">
+                                    <span class="value" id="team-completion-rate">78%</span>
+                                    <span class="label">完了率</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="value" id="team-tasks-completed">45</span>
+                                    <span class="label">完了タスク</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="value" id="team-avg-lead-time">2.3日</span>
+                                    <span class="label">平均リードタイム</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- メンバー一覧 -->
+                        <div class="kpi-card members-card">
+                            <h3>メンバー別パフォーマンス</h3>
+                            <div id="members-list" class="members-list">
+                                <!-- メンバーリストがここに表示される -->
+                            </div>
+                        </div>
+
+                        <!-- チームタスク -->
+                        <div class="kpi-card team-tasks-card">
+                            <h3>チームタスク</h3>
+                            <div id="team-tasks-list" class="team-tasks-list">
+                                <!-- チームタスクがここに表示される -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タスク追加ページ -->
+                <div id="add-task-page" class="page">
+                    <div class="page-header">
+                        <h2>タスク追加</h2>
+                        <div class="page-actions">
+                            <button id="save-task-btn" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                保存
+                            </button>
+                            <button id="cancel-task-btn" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                キャンセル
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="task-add-form">
+                        <div class="form-section">
+                            <h3>基本情報</h3>
+                            <div class="form-group">
+                                <label for="task-name">タスク名</label>
+                                <input type="text" id="task-name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="task-urgency">緊急度</label>
+                                    <select id="task-urgency">
+                                        <option value="low">低</option>
+                                        <option value="medium" selected>中</option>
+                                        <option value="high">高</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="task-start-date">開始日</label>
+                                    <input type="date" id="task-start-date">
+                                </div>
+                                <div class="form-group">
+                                    <label for="task-end-date">終了日</label>
+                                    <input type="date" id="task-end-date">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3>タスクの細分化</h3>
+                            <button id="mindmap-subdivision-btn" class="btn btn-secondary">
+                                <i class="fas fa-project-diagram"></i>
+                                マインドマップで細分化
+                            </button>
+                            <div id="mindmap-subdivision" class="mindmap-subdivision hidden">
+                                <div class="mindmap-container">
+                                    <div id="task-mindmap-canvas" class="mindmap-canvas">
+                                        <!-- タスク用マインドマップがここに表示される -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- マインドマップページ -->
+                <div id="mindmap-page" class="page">
+                    <div class="page-header">
+                        <h2>マインドマップ</h2>
+                        <div class="page-actions">
+                            <button id="add-node-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                ノード追加
+                            </button>
+                            <button id="generate-tasks-btn" class="btn btn-secondary">
+                                <i class="fas fa-tasks"></i>
+                                タスク生成
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mindmap-container">
+                        <div id="mindmap-canvas" class="mindmap-canvas">
+                            <!-- マインドマップがここに表示される -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- モーダル -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">モーダル</h3>
+                <button id="modal-close" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- モーダル内容がここに表示される -->
+            </div>
+        </div>
+    </div>
+
+    <!-- スクリプト -->
+    <script src="config/firebase-config.js"></script>
+    <script src="src/utils/storage.js"></script>
+    <script src="src/utils/auth.js"></script>
+    <script src="src/utils/task-manager.js"></script>
+    <script src="src/utils/team-manager.js"></script>
+    <script src="src/utils/mindmap-manager.js"></script>
+    <script src="src/utils/chart-manager.js"></script>
+    <script src="src/components/modal.js"></script>
+    <script src="src/components/task-card.js"></script>
+    <script src="src/components/member-card.js"></script>
+    <script src="src/pages/dashboard.js"></script>
+    <script src="src/pages/tasks.js"></script>
+    <script src="src/pages/team.js"></script>
+    <script src="src/pages/mindmap.js"></script>
+    <script src="src/app.js"></script>
+</body>
+</html>

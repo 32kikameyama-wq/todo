@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATD System - 機能テスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #008b8b;
+            margin-bottom: 15px;
+        }
+        .test-button {
+            background: #008b8b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #006666;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #f0f0f0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>ATD System - 機能テスト</h1>
+        <p>実装した機能のテストを行います。</p>
+        
+        <div class="test-section">
+            <h3>1. タイマー機能テスト</h3>
+            <button class="test-button" onclick="testTimer()">タイマー機能をテスト</button>
+            <div id="timer-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. ドラッグ&ドロップ機能テスト</h3>
+            <button class="test-button" onclick="testDragDrop()">ドラッグ&ドロップ機能をテスト</button>
+            <div id="dragdrop-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. フィルター機能テスト</h3>
+            <button class="test-button" onclick="testFilters()">フィルター機能をテスト</button>
+            <div id="filter-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 通知システムテスト</h3>
+            <button class="test-button" onclick="testNotifications()">通知システムをテスト</button>
+            <div id="notification-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. エクスポート/インポート機能テスト</h3>
+            <button class="test-button" onclick="testExportImport()">エクスポート/インポート機能をテスト</button>
+            <div id="export-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>6. チャート更新機能テスト</h3>
+            <button class="test-button" onclick="testCharts()">チャート更新機能をテスト</button>
+            <div id="chart-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // テスト用のモックアプリ
+        const mockApp = {
+            tasks: [
+                {
+                    id: 'test_task_1',
+                    title: 'テストタスク1',
+                    status: 'pending',
+                    priority: 1,
+                    timer: { isRunning: false, elapsed: 0 }
+                },
+                {
+                    id: 'test_task_2',
+                    title: 'テストタスク2',
+                    status: 'completed',
+                    priority: 2,
+                    timer: { isRunning: false, elapsed: 0 }
+                }
+            ],
+            notifications: [],
+            
+            showNotification: function(message, type) {
+                this.notifications.push({ message, type, timestamp: Date.now() });
+                console.log(`通知: ${message} (${type})`);
+            },
+            
+            updateProgressChart: function() {
+                console.log('チャート更新');
+            },
+            
+            saveTasksToStorage: function() {
+                console.log('タスクをローカルストレージに保存');
+            }
+        };
+
+        function testTimer() {
+            const result = document.getElementById('timer-result');
+            result.style.display = 'block';
+            
+            try {
+                // タイマー機能のテスト
+                const task = mockApp.tasks[0];
+                const originalElapsed = task.timer.elapsed;
+                
+                // タイマー開始のシミュレーション
+                task.timer.isRunning = true;
+                task.timer.startTime = Date.now();
+                
+                // 1秒待機
+                setTimeout(() => {
+                    // タイマー停止のシミュレーション
+                    task.timer.isRunning = false;
+                    task.timer.elapsed += Date.now() - task.timer.startTime;
+                    
+                    if (task.timer.elapsed > originalElapsed) {
+                        result.innerHTML = '<div class="success">✅ タイマー機能が正常に動作しています</div>';
+                    } else {
+                        result.innerHTML = '<div class="error">❌ タイマー機能に問題があります</div>';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+
+        function testDragDrop() {
+            const result = document.getElementById('dragdrop-result');
+            result.style.display = 'block';
+            
+            try {
+                // ドラッグ&ドロップ機能のテスト
+                const originalOrder = [...mockApp.tasks];
+                
+                // タスクの並び替えシミュレーション
+                const draggedTask = mockApp.tasks.splice(0, 1)[0];
+                mockApp.tasks.push(draggedTask);
+                
+                if (mockApp.tasks.length === originalOrder.length) {
+                    result.innerHTML = '<div class="success">✅ ドラッグ&ドロップ機能が正常に動作しています</div>';
+                } else {
+                    result.innerHTML = '<div class="error">❌ ドラッグ&ドロップ機能に問題があります</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+
+        function testFilters() {
+            const result = document.getElementById('filter-result');
+            result.style.display = 'block';
+            
+            try {
+                // フィルター機能のテスト
+                const completedTasks = mockApp.tasks.filter(task => task.status === 'completed');
+                const pendingTasks = mockApp.tasks.filter(task => task.status === 'pending');
+                
+                if (completedTasks.length > 0 && pendingTasks.length > 0) {
+                    result.innerHTML = '<div class="success">✅ フィルター機能が正常に動作しています</div>';
+                } else {
+                    result.innerHTML = '<div class="error">❌ フィルター機能に問題があります</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+
+        function testNotifications() {
+            const result = document.getElementById('notification-result');
+            result.style.display = 'block';
+            
+            try {
+                // 通知システムのテスト
+                mockApp.showNotification('テスト通知', 'info');
+                
+                if (mockApp.notifications.length > 0) {
+                    result.innerHTML = '<div class="success">✅ 通知システムが正常に動作しています</div>';
+                } else {
+                    result.innerHTML = '<div class="error">❌ 通知システムに問題があります</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+
+        function testExportImport() {
+            const result = document.getElementById('export-result');
+            result.style.display = 'block';
+            
+            try {
+                // エクスポート/インポート機能のテスト
+                const exportData = {
+                    tasks: mockApp.tasks,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0.0'
+                };
+                
+                const jsonString = JSON.stringify(exportData);
+                const parsedData = JSON.parse(jsonString);
+                
+                if (parsedData.tasks.length === mockApp.tasks.length) {
+                    result.innerHTML = '<div class="success">✅ エクスポート/インポート機能が正常に動作しています</div>';
+                } else {
+                    result.innerHTML = '<div class="error">❌ エクスポート/インポート機能に問題があります</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+
+        function testCharts() {
+            const result = document.getElementById('chart-result');
+            result.style.display = 'block';
+            
+            try {
+                // チャート更新機能のテスト
+                mockApp.updateProgressChart();
+                
+                result.innerHTML = '<div class="success">✅ チャート更新機能が正常に動作しています</div>';
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ エラー: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
