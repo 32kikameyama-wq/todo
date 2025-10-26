@@ -165,3 +165,4 @@ class ChartManager {
 
 // グローバルに公開
 window.ChartManager = ChartManager;
+

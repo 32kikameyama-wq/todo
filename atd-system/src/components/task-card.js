@@ -76,8 +76,12 @@ class TaskCard {
                     <div class="task-actions">
                         <button class="btn btn-sm btn-secondary" onclick="app.showTaskDetail('${this.task.id}')">詳細</button>
                         <button class="btn btn-sm btn-secondary" onclick="app.openMindmap('${this.task.id}')">マインドマップ</button>
+                        <button class="btn btn-sm btn-primary" onclick="app.moveToToday('${this.task.id}')">📅 今日のタスク</button>
+                        <button class="btn btn-sm btn-secondary" onclick="app.moveToTomorrow('${this.task.id}')">📅 明日のタスク</button>
+                        <button class="btn btn-sm btn-info" onclick="app.moveToOther('${this.task.id}')">📋 その他のタスク</button>
                         <button class="btn btn-sm btn-secondary" onclick="app.moveTask('${this.task.id}', 'up')">↑</button>
                         <button class="btn btn-sm btn-secondary" onclick="app.moveTask('${this.task.id}', 'down')">↓</button>
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteTask('${this.task.id}')">🗑️ 削除</button>
                     </div>
                 ` : ''}
             </div>

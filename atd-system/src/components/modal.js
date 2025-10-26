@@ -51,3 +51,4 @@ class ModalManager {
 
 // グローバルに公開
 window.ModalManager = ModalManager;
+

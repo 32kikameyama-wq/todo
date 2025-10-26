@@ -200,3 +200,4 @@ class TeamPage {
 
 // グローバルに公開
 window.TeamPage = TeamPage;
+

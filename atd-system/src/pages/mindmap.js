@@ -44,27 +44,208 @@ class MindmapPage {
         const canvas = document.getElementById('mindmap-canvas');
         if (!canvas) return;
         
-        // 簡易的なマインドマップ表示
-        let html = '<div class="mindmap-nodes">';
+        // SVGベースのマインドマップ描画
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('viewBox', '0 0 1200 800');
+        svg.className = 'mindmap-svg';
         
+        // 接続線の描画
+        this.renderConnections(svg);
+        
+        // ノードの描画
+        this.renderNodes(svg);
+        
+        canvas.innerHTML = '';
+        canvas.appendChild(svg);
+        
+        // ドラッグ&ドロップ機能の設定
+        this.setupDragAndDrop();
+    }
+    
+    renderConnections(svg) {
+        this.connections.forEach(connection => {
+            const fromNode = this.nodes.find(n => n.id === connection.from);
+            const toNode = this.nodes.find(n => n.id === connection.to);
+            
+            if (fromNode && toNode) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', fromNode.position.x + 75);
+                line.setAttribute('y1', fromNode.position.y + 25);
+                line.setAttribute('x2', toNode.position.x + 75);
+                line.setAttribute('y2', toNode.position.y + 25);
+                line.setAttribute('stroke', '#666');
+                line.setAttribute('stroke-width', '2');
+                line.setAttribute('stroke-dasharray', '5,5');
+                line.className = 'connection-line';
+                svg.appendChild(line);
+            }
+        });
+    }
+    
+    renderNodes(svg) {
         this.nodes.forEach(node => {
-            html += `
-                <div class="mindmap-node" data-node-id="${node.id}" style="left: ${node.position.x}px; top: ${node.position.y}px;">
-                    <div class="node-content">
-                        <h4>${node.title}</h4>
-                        <p>${node.description}</p>
-                        <div class="node-actions">
-                            <button onclick="app.addChildNode('${node.id}')">+ 子ノード</button>
-                            <button onclick="app.editNode('${node.id}')">編集</button>
-                            <button onclick="app.deleteNode('${node.id}')">削除</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            nodeGroup.setAttribute('transform', `translate(${node.position.x}, ${node.position.y})`);
+            nodeGroup.className = 'mindmap-node-group';
+            nodeGroup.setAttribute('data-node-id', node.id);
+            
+            // ノードの背景
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('width', '150');
+            rect.setAttribute('height', '50');
+            rect.setAttribute('rx', '10');
+            rect.setAttribute('ry', '10');
+            rect.setAttribute('fill', this.getNodeColor(node.type));
+            rect.setAttribute('stroke', '#333');
+            rect.setAttribute('stroke-width', '2');
+            rect.className = 'node-background';
+            nodeGroup.appendChild(rect);
+            
+            // ノードのタイトル
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', '75');
+            text.setAttribute('y', '20');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '12');
+            text.setAttribute('font-weight', 'bold');
+            text.setAttribute('fill', '#333');
+            text.textContent = node.title;
+            nodeGroup.appendChild(text);
+            
+            // ノードのタイプ表示
+            const typeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            typeText.setAttribute('x', '75');
+            typeText.setAttribute('y', '35');
+            typeText.setAttribute('text-anchor', 'middle');
+            typeText.setAttribute('font-size', '10');
+            typeText.setAttribute('fill', '#666');
+            typeText.textContent = this.getNodeTypeLabel(node.type);
+            nodeGroup.appendChild(typeText);
+            
+            // 子ノード追加ボタン
+            const addButton = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            addButton.setAttribute('cx', '140');
+            addButton.setAttribute('cy', '25');
+            addButton.setAttribute('r', '8');
+            addButton.setAttribute('fill', '#4CAF50');
+            addButton.setAttribute('stroke', '#fff');
+            addButton.setAttribute('stroke-width', '2');
+            addButton.className = 'add-child-btn';
+            addButton.setAttribute('data-parent-id', node.id);
+            nodeGroup.appendChild(addButton);
+            
+            const addText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            addText.setAttribute('x', '140');
+            addText.setAttribute('y', '29');
+            addText.setAttribute('text-anchor', 'middle');
+            addText.setAttribute('font-size', '12');
+            addText.setAttribute('font-weight', 'bold');
+            addText.setAttribute('fill', '#fff');
+            addText.textContent = '+';
+            nodeGroup.appendChild(addText);
+            
+            svg.appendChild(nodeGroup);
+        });
+    }
+    
+    getNodeColor(type) {
+        const colors = {
+            'objective': '#E3F2FD',
+            'kpi': '#FFF3E0',
+            'action': '#E8F5E8',
+            'task': '#FCE4EC'
+        };
+        return colors[type] || '#F5F5F5';
+    }
+    
+    getNodeTypeLabel(type) {
+        const labels = {
+            'objective': '目的',
+            'kpi': 'KPI',
+            'action': 'アクション',
+            'task': 'タスク'
+        };
+        return labels[type] || 'ノード';
+    }
+    
+    setupDragAndDrop() {
+        const nodes = document.querySelectorAll('.mindmap-node-group');
+        nodes.forEach(nodeGroup => {
+            nodeGroup.draggable = true;
+            
+            nodeGroup.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', nodeGroup.dataset.nodeId);
+                nodeGroup.classList.add('dragging');
+            });
+            
+            nodeGroup.addEventListener('dragend', () => {
+                nodeGroup.classList.remove('dragging');
+            });
+            
+            nodeGroup.addEventListener('drag', (e) => {
+                const rect = nodeGroup.getBoundingClientRect();
+                const canvas = document.getElementById('mindmap-canvas');
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                const x = e.clientX - canvasRect.left;
+                const y = e.clientY - canvasRect.top;
+                
+                nodeGroup.setAttribute('transform', `translate(${x - 75}, ${y - 25})`);
+                
+                // ノードの位置を更新
+                const nodeId = nodeGroup.dataset.nodeId;
+                const node = this.nodes.find(n => n.id === nodeId);
+                if (node) {
+                    node.position.x = x - 75;
+                    node.position.y = y - 25;
+                }
+            });
         });
         
-        html += '</div>';
-        canvas.innerHTML = html;
+        // 子ノード追加ボタンのイベント
+        const addButtons = document.querySelectorAll('.add-child-btn');
+        addButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const parentId = button.dataset.parentId;
+                this.addChildNode(parentId);
+            });
+        });
+        
+        // ノードクリックイベント
+        nodes.forEach(nodeGroup => {
+            nodeGroup.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('add-child-btn')) {
+                    const nodeId = nodeGroup.dataset.nodeId;
+                    this.showNodeDetails(nodeId);
+                }
+            });
+        });
+    }
+    
+    showNodeDetails(nodeId) {
+        const node = this.nodes.find(n => n.id === nodeId);
+        if (!node) return;
+        
+        const modalContent = `
+            <div class="node-details">
+                <h3>${node.title}</h3>
+                <p><strong>タイプ:</strong> ${this.getNodeTypeLabel(node.type)}</p>
+                <p><strong>説明:</strong> ${node.description || '説明なし'}</p>
+                <p><strong>作成日:</strong> ${new Date(node.createdAt).toLocaleDateString()}</p>
+                <div class="node-actions">
+                    <button class="btn btn-primary" onclick="mindmapPage.editNode('${nodeId}')">編集</button>
+                    <button class="btn btn-secondary" onclick="mindmapPage.addChildNode('${nodeId}')">子ノード追加</button>
+                    <button class="btn btn-danger" onclick="mindmapPage.deleteNode('${nodeId}')">削除</button>
+                </div>
+            </div>
+        `;
+        
+        if (window.app) {
+            window.app.showModal('ノード詳細', modalContent);
+        }
     }
     
     setupEventListeners() {

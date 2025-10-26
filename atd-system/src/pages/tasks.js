@@ -113,6 +113,12 @@ class TasksPage {
             mindmapBreakdownBtn.addEventListener('click', () => this.showMindmapBreakdown());
         }
         
+        // 今日のタスクボタン
+        const todayTasksBtn = document.getElementById('today-tasks-btn');
+        if (todayTasksBtn) {
+            todayTasksBtn.addEventListener('click', () => this.showTodayTasks());
+        }
+        
         // フィルター
         const priorityFilter = document.getElementById('task-priority-filter');
         const statusFilter = document.getElementById('task-status-filter');
@@ -169,6 +175,32 @@ class TasksPage {
         if (window.app) {
             window.app.navigateToPage('mindmap');
         }
+    }
+    
+    showTodayTasks() {
+        // メインアプリからタスクを取得
+        if (!window.app || !window.app.tasks) {
+            console.error('メインアプリまたはタスクが見つかりません');
+            return;
+        }
+        
+        // 今日のタスクをフィルタリング
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const todayTasks = window.app.tasks.filter(task => {
+            if (!task.dueDate) return false;
+            const taskDate = new Date(task.dueDate);
+            return taskDate >= today && taskDate < tomorrow;
+        });
+        
+        // 今日のタスクを表示
+        this.renderTasks(todayTasks);
+        
+        // 通知
+        window.app.showNotification(`📅 今日のタスク (${todayTasks.length}件)`, 'info');
     }
     
     applyFilters() {

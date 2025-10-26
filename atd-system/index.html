@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATD - ARS TODO Management System</title>
-    <link rel="stylesheet" href="src/styles/main.css">
-    <link rel="stylesheet" href="src/styles/dashboard.css">
-    <link rel="stylesheet" href="src/styles/task.css">
-    <link rel="stylesheet" href="src/styles/team.css">
+    <link rel="stylesheet" href="src/styles/main.css?v=2.0.1">
+    <link rel="stylesheet" href="src/styles/dashboard.css?v=1.5.0">
+    <link rel="stylesheet" href="src/styles/task.css?v=1.5.0">
+    <link rel="stylesheet" href="src/styles/team.css?v=1.5.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
@@ -30,17 +30,620 @@
                     <p>ARS TODO Management System</p>
                 </div>
                 <div class="login-form">
-                    <button id="google-login-btn" class="btn btn-primary">
-                        <i class="fab fa-google"></i>
-                        Googleでログイン
+                    <button id="login-btn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        ログイン
                     </button>
-                    <button id="guest-login-btn" class="btn btn-secondary">
-                        <i class="fas fa-user"></i>
-                        ゲストとして続行
+                    <button id="register-btn" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i>
+                        新規登録
+                    </button>
+                    <button id="create-test-user-btn" class="btn" style="background: #ff6b35; color: white; margin-top: 10px;">
+                        <i class="fas fa-flask"></i>
+                        テストユーザーを作成してログイン
                     </button>
                 </div>
             </div>
         </div>
+
+    <!-- 新規登録モーダル -->
+    <div id="register-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> 新規登録</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">表示名</label>
+                        <input type="text" id="register-name" class="form-control" 
+                               placeholder="表示名を入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email">メールアドレス</label>
+                        <input type="email" id="register-email" class="form-control" 
+                               placeholder="メールアドレスを入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">パスワード</label>
+                        <input type="password" id="register-password" class="form-control" 
+                               placeholder="パスワードを入力（6文字以上）" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password-confirm">パスワード確認</label>
+                        <input type="password" id="register-password-confirm" class="form-control" 
+                               placeholder="パスワードを再入力" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            登録
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- パスワードリセットモーダル -->
+    <div id="password-reset-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> パスワードリセット</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="password-reset-form">
+                    <div class="form-group">
+                        <label for="reset-email">メールアドレス</label>
+                        <input type="email" id="reset-email" class="form-control" 
+                               placeholder="登録済みのメールアドレスを入力" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i>
+                            リセットトークン生成
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="reset-token-section" class="hidden">
+                    <div class="form-group">
+                        <label for="reset-token">リセットトークン</label>
+                        <input type="text" id="reset-token" class="form-control" 
+                               placeholder="生成されたトークンを入力" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">新しいパスワード</label>
+                        <input type="password" id="new-password" class="form-control" 
+                               placeholder="新しいパスワードを入力（6文字以上）" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="execute-reset-btn" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            パスワード更新
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ログインモーダル -->
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-sign-in-alt"></i> ログイン</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">メールアドレス</label>
+                        <input type="email" id="login-email" class="form-control" 
+                               placeholder="メールアドレスを入力" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">パスワード</label>
+                        <input type="password" id="login-password" class="form-control" 
+                               placeholder="パスワードを入力" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            ログイン
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                    <div class="form-links">
+                        <button type="button" class="link-btn" onclick="app.showPasswordReset()">
+                            <i class="fas fa-key"></i>
+                            パスワードを忘れた場合
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> 設定</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-menu">
+                    <div class="settings-option" onclick="app.showAccountSettings()" style="cursor: pointer;">
+                        <div class="settings-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="settings-content">
+                            <h4>登録アドレス/パスワード変更</h4>
+                            <p>メールアドレスとパスワードを変更します</p>
+                        </div>
+                        <div class="settings-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-option" onclick="app.showProfileModal()" style="cursor: pointer;">
+                        <div class="settings-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="settings-content">
+                            <h4>プロフィール編集</h4>
+                            <p>表示名やアバターを変更します</p>
+                        </div>
+                        <div class="settings-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-option" onclick="app.showAdminLogin()" style="cursor: pointer;">
+                        <div class="settings-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="settings-content">
+                            <h4>管理ページ</h4>
+                            <p>メンバー管理やシステム設定を行います</p>
+                        </div>
+                        <div class="settings-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- プロフィール編集モーダル -->
+    <div id="profile-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> プロフィール編集</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="profile-form">
+                       <div class="form-group">
+                           <label>プロフィール画像</label>
+                           <div class="avatar-upload-container">
+                               <div class="avatar-preview">
+                                   <div class="avatar-crop-container">
+                                       <img id="avatar-preview-img" src="" alt="アバター" class="avatar-preview-img">
+                                       <div class="avatar-crop-overlay">
+                                           <div class="crop-handle crop-handle-nw"></div>
+                                           <div class="crop-handle crop-handle-ne"></div>
+                                           <div class="crop-handle crop-handle-sw"></div>
+                                           <div class="crop-handle crop-handle-se"></div>
+                                       </div>
+                                   </div>
+                                   <i class="fas fa-user-circle avatar-preview-placeholder"></i>
+                               </div>
+                               <div class="avatar-upload-actions">
+                                   <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+                                   <button type="button" id="avatar-upload-btn" class="btn btn-secondary">
+                                       <i class="fas fa-upload"></i>
+                                       画像を選択
+                                   </button>
+                                   <button type="button" id="avatar-remove-btn" class="btn btn-danger">
+                                       <i class="fas fa-trash"></i>
+                                       削除
+                                   </button>
+                                   <button type="button" id="avatar-reset-btn" class="btn btn-info">
+                                       <i class="fas fa-undo"></i>
+                                       リセット
+                                   </button>
+                               </div>
+                                  <div class="avatar-position-controls">
+                                      <label>位置調整</label>
+                                      <div class="position-sliders">
+                                          <div class="slider-group">
+                                              <label>X位置:</label>
+                                              <input type="range" id="avatar-x-slider" min="0" max="100" value="50" class="position-slider">
+                                              <span id="avatar-x-value">50%</span>
+                                          </div>
+                                          <div class="slider-group">
+                                              <label>Y位置:</label>
+                                              <input type="range" id="avatar-y-slider" min="0" max="100" value="50" class="position-slider">
+                                              <span id="avatar-y-value">50%</span>
+                                          </div>
+                                          <div class="slider-group">
+                                              <label>サイズ:</label>
+                                              <input type="range" id="avatar-scale-slider" min="50" max="200" value="100" class="position-slider">
+                                              <span id="avatar-scale-value">100%</span>
+                                          </div>
+                                      </div>
+                                      <div class="avatar-help-text">
+                                          <small>画像をドラッグして位置を調整し、スライダーで細かく調整できます</small>
+                                      </div>
+                                  </div>
+                           </div>
+                       </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-name">表示名</label>
+                        <input type="text" id="profile-name" class="form-control" 
+                               placeholder="表示名を入力" required>
+                        <div class="form-description">
+                            この名前がチームメンバーに表示されます（永続保存されます）
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-email">メールアドレス</label>
+                        <input type="email" id="profile-email" class="form-control" 
+                               placeholder="メールアドレスを入力" required>
+                        <div class="form-description">
+                            メールアドレスを変更できます（永続保存されます）
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            保存（永続保存）
+                        </button>
+                        <button type="button" class="btn btn-warning" onclick="app.showProfileRestoreModal()">
+                            <i class="fas fa-undo"></i>
+                            復元
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                    <div class="form-description" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        <i class="fas fa-shield-alt"></i>
+                        保存されたプロフィール情報は自動的にバックアップされ、ユーザーが削除するまで保護されます
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- プロフィール復元モーダル -->
+    <div id="profile-restore-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-undo"></i> プロフィール復元</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>復元可能なバージョンを選択してください</label>
+                    <div id="profile-history-list" class="profile-history-list">
+                        <!-- 履歴が動的に追加されます -->
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="app.restoreSelectedProfile()">
+                        <i class="fas fa-undo"></i>
+                        選択したバージョンを復元
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                        キャンセル
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メンバー登録モーダル -->
+    <div id="member-registration-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> メンバー登録</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="member-registration-form">
+                    <div class="form-group">
+                        <label for="member-name">表示名</label>
+                        <input type="text" id="member-name" class="form-control" 
+                               placeholder="チーム内での表示名を入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-email">メールアドレス</label>
+                        <input type="email" id="member-email" class="form-control" 
+                               placeholder="メールアドレスを入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-password">パスワード</label>
+                        <input type="password" id="member-password" class="form-control" 
+                               placeholder="パスワードを入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-password-confirm">パスワード確認</label>
+                        <input type="password" id="member-password-confirm" class="form-control" 
+                               placeholder="パスワードを再入力" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            登録
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- アカウント設定モーダル -->
+    <div id="account-settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> 登録アドレス/パスワード変更</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="account-settings-form">
+                    <div class="form-group">
+                        <label for="current-email">現在のメールアドレス</label>
+                        <input type="email" id="current-email" class="form-control" 
+                               value="" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="current-password">現在のパスワード</label>
+                        <input type="password" id="current-password" class="form-control" 
+                               placeholder="現在のパスワードを入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-email">新しいメールアドレス</label>
+                        <input type="email" id="new-email" class="form-control" 
+                               placeholder="新しいメールアドレスを入力">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="settings-new-password">新しいパスワード</label>
+                        <input type="password" id="settings-new-password" class="form-control" 
+                               placeholder="新しいパスワードを入力">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            保存
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理画面ログインモーダル -->
+    <div id="admin-login-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-shield-alt"></i> ユーザー登録管理ログイン</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-password">管理パスワード</label>
+                        <input type="password" id="admin-password" class="form-control" 
+                               placeholder="管理パスワードを入力" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            ログイン
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理画面モーダル -->
+    <div id="admin-panel-modal" class="modal hidden">
+        <div class="modal-content admin-panel">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> ユーザー登録管理</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-sections">
+                    <!-- メンバー登録セクション -->
+                    <div class="admin-section">
+                        <h3><i class="fas fa-user-plus"></i> メンバー登録</h3>
+                        
+                        <div class="form-actions">
+                            <button type="button" id="show-member-registration-btn" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i>
+                                新しいメンバーを登録
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- メンバー管理セクション -->
+                    <div class="admin-section">
+                        <h3><i class="fas fa-users"></i> メンバー管理</h3>
+                        
+                        <div class="form-group">
+                            <label>登録済みメンバー</label>
+                            <div id="registered-members-list" class="members-list">
+                                <!-- 登録済みメンバーがここに表示される -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メンバー編集モーダル -->
+    <div id="member-edit-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> メンバー編集</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="member-edit-form">
+                    <div class="form-group">
+                        <label for="edit-member-name">表示名</label>
+                        <input type="text" id="edit-member-name" class="form-control" 
+                               placeholder="チーム内での表示名を入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-member-email">メールアドレス</label>
+                        <input type="email" id="edit-member-email" class="form-control" 
+                               placeholder="メールアドレスを入力" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-member-password">新しいパスワード</label>
+                        <input type="password" id="edit-member-password" class="form-control" 
+                               placeholder="新しいパスワードを入力（変更しない場合は空欄）">
+                        <div class="form-description">
+                            パスワードを変更しない場合は空欄のままにしてください
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-member-status">ステータス</label>
+                        <select id="edit-member-status" class="form-control">
+                            <option value="active">アクティブ</option>
+                            <option value="inactive">非アクティブ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            保存
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                        <button type="button" id="delete-member-btn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            削除
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- メンバー削除確認モーダル -->
+    <div id="member-delete-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> メンバー削除確認</h3>
+                <button class="modal-close" onclick="app.closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>このメンバーを削除しますか？</p>
+                    <p class="warning-text">この操作は取り消せません。</p>
+                </div>
+                
+                <form id="member-delete-form">
+                    <div class="form-group">
+                        <label for="delete-password">削除パスワード</label>
+                        <input type="password" id="delete-password" class="form-control" 
+                               placeholder="削除パスワード「1234」を入力" required>
+                        <div class="form-description">
+                            削除を実行するには管理パスワード「1234」を入力してください
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            削除実行
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeModal()">
+                            キャンセル
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
         <!-- メインアプリケーション -->
         <div id="main-app" class="main-app hidden">
@@ -80,9 +683,34 @@
                     </div>
                     <div class="user-info">
                         <span id="user-name">ユーザー名</span>
-                        <button id="user-menu-btn" class="user-menu-btn">
-                            <i class="fas fa-user-circle"></i>
-                        </button>
+                        <div class="user-menu-container">
+                            <button id="user-menu-btn" class="user-menu-btn">
+                                <i class="fas fa-user-circle"></i>
+                            </button>
+                            <div id="user-menu" class="user-menu">
+                                <div class="user-menu-header">
+                                    <div class="user-avatar">
+                                        <img id="user-avatar-img" src="" alt="アバター" class="avatar-img">
+                                        <i class="fas fa-user-circle avatar-placeholder"></i>
+                                    </div>
+                                    <div class="user-details">
+                                        <div id="user-display-name" class="user-name">ユーザー</div>
+                                        <div id="user-display-email" class="user-email"></div>
+                                    </div>
+                                </div>
+                                <div class="user-menu-items">
+                                    <button class="user-menu-item" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                        設定
+                                    </button>
+                                    <div class="user-menu-divider"></div>
+                                    <button class="user-menu-item" data-action="logout">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        ログアウト
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -124,11 +752,11 @@
                                 </div>
                             </div>
 
-                            <!-- 今日のフォーカス -->
+                            <!-- 今日のタスク -->
                             <div class="kpi-card focus-card">
-                                <h3>今日のフォーカス (3件)</h3>
-                                <div id="focus-tasks" class="focus-tasks">
-                                    <!-- フォーカスタスクがここに表示される -->
+                                <h3>今日のタスク (<span id="today-tasks-count-dash">0</span>件)</h3>
+                                <div id="today-tasks-dashboard" class="focus-tasks">
+                                    <!-- 今日のタスクがここに表示される -->
                                 </div>
                             </div>
 
@@ -168,11 +796,11 @@
                                 </div>
                             </div>
 
-                            <!-- チームフォーカス -->
+                            <!-- チーム今日のタスク -->
                             <div class="kpi-card focus-card">
-                                <h3>チームフォーカス (5件)</h3>
-                                <div id="team-focus-tasks" class="focus-tasks">
-                                    <!-- チームフォーカスタスクがここに表示される -->
+                                <h3>チーム今日のタスク (<span id="team-today-tasks-count-dash">0</span>件)</h3>
+                                <div id="team-today-tasks-dashboard" class="focus-tasks">
+                                    <!-- チーム今日のタスクがここに表示される -->
                                 </div>
                             </div>
 
@@ -223,8 +851,37 @@
                         </select>
                     </div>
                     
-                    <div id="task-list" class="task-list">
-                        <!-- タスクリストがここに表示される -->
+                    <!-- 今日のタスクセクション -->
+                    <div id="today-tasks-section" class="task-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-calendar-day"></i> 今日のタスク</h3>
+                            <span id="today-tasks-count" class="task-count">0件</span>
+                        </div>
+                        <div id="today-tasks-list" class="task-list">
+                            <!-- 今日のタスクがここに表示される -->
+                        </div>
+                    </div>
+                    
+                    <!-- 明日のタスクセクション -->
+                    <div id="tomorrow-tasks-section" class="task-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-calendar-plus"></i> 明日のタスク</h3>
+                            <span id="tomorrow-tasks-count" class="task-count">0件</span>
+                        </div>
+                        <div id="tomorrow-tasks-list" class="task-list">
+                            <!-- 明日のタスクがここに表示される -->
+                        </div>
+                    </div>
+                    
+                    <!-- その他のタスクセクション -->
+                    <div id="other-tasks-section" class="task-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-list"></i> その他のタスク</h3>
+                            <span id="other-tasks-count" class="task-count">0件</span>
+                        </div>
+                        <div id="task-list" class="task-list">
+                            <!-- その他のタスクがここに表示される -->
+                        </div>
                     </div>
                 </div>
 
@@ -364,6 +1021,7 @@
                         </div>
                     </div>
                 </div>
+
             </main>
         </div>
     </div>
@@ -384,20 +1042,79 @@
     </div>
 
     <!-- スクリプト -->
-    <script src="config/firebase-config.js"></script>
-    <script src="src/utils/storage.js"></script>
-    <script src="src/utils/auth.js"></script>
-    <script src="src/utils/task-manager.js"></script>
-    <script src="src/utils/team-manager.js"></script>
-    <script src="src/utils/mindmap-manager.js"></script>
-    <script src="src/utils/chart-manager.js"></script>
-    <script src="src/components/modal.js"></script>
-    <script src="src/components/task-card.js"></script>
-    <script src="src/components/member-card.js"></script>
-    <script src="src/pages/dashboard.js"></script>
-    <script src="src/pages/tasks.js"></script>
-    <script src="src/pages/team.js"></script>
-    <script src="src/pages/mindmap.js"></script>
-    <script src="src/app.js"></script>
+    <script src="config/firebase-config.js?v=1.5.0"></script>
+    <script src="src/utils/storage.js?v=1.5.0"></script>
+    <script src="src/utils/auth.js?v=1.5.7"></script>
+    <script src="src/utils/task-manager.js?v=1.5.0"></script>
+    <script src="src/utils/team-manager.js?v=1.5.0"></script>
+    <script src="src/utils/mindmap-manager.js?v=1.5.0"></script>
+    <script src="src/utils/chart-manager.js?v=1.5.0"></script>
+    <script src="src/components/modal.js?v=1.5.0"></script>
+    <script src="src/components/task-card.js?v=1.5.0"></script>
+    <script src="src/components/member-card.js?v=1.5.0"></script>
+    <script src="src/pages/dashboard.js?v=1.5.0"></script>
+    <script src="src/pages/tasks.js?v=1.5.0"></script>
+    <script src="src/pages/team.js?v=1.5.0"></script>
+    <script src="src/pages/mindmap.js?v=1.5.0"></script>
+    <script src="src/app.js?v=2.8.19"></script>
+    
+    <!-- アプリケーション初期化 -->
+    <script>
+        // グローバルエラーハンドリング
+        window.addEventListener('error', function(event) {
+            console.error('❌ グローバルエラー:', event.error);
+        });
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('❌ 未処理のPromise拒否:', event.reason);
+        });
+        
+        // アプリケーション初期化
+        try {
+            console.log('🚀 アプリケーション初期化開始');
+            
+            // DOMが完全に読み込まれた後にアプリケーションを初期化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initializeApp();
+                });
+            } else {
+                initializeApp();
+            }
+            
+            function initializeApp() {
+                try {
+                    // 必要なクラスが定義されているかチェック
+                    if (typeof ATDApp === 'undefined') {
+                        throw new Error('ATDAppクラスが定義されていません');
+                    }
+                    
+                    // アプリケーションを初期化
+                    window.app = new ATDApp();
+                    console.log('✅ アプリケーション初期化完了');
+                    
+                } catch (error) {
+                    console.error('❌ アプリケーション初期化エラー:', error);
+                    
+                    // エラー画面を表示
+                    const loadingScreen = document.getElementById('loading-screen');
+                    if (loadingScreen) {
+                        loadingScreen.innerHTML = `
+                            <div style="text-align: center; color: white; padding: 20px;">
+                                <h2>⚠️ アプリケーションの読み込みに失敗しました</h2>
+                                <p>エラー: ${error.message}</p>
+                                <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px; background: #ff6b35; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                    ページを再読み込み
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+            
+        } catch (error) {
+            console.error('❌ 初期化スクリプトエラー:', error);
+        }
+    </script>
 </body>
 </html>

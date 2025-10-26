@@ -3,12 +3,35 @@ class TaskManager {
     constructor() {
         this.tasks = [];
         this.storage = new StorageManager();
+        this.currentUserId = null;
+    }
+    
+    // 現在のユーザーIDを設定
+    setCurrentUser(user) {
+        console.log('👤 タスクマネージャーにユーザー設定:', user ? user.displayName : 'null');
+        this.currentUserId = user ? user.uid : null;
+        this.storage.setCurrentUser(user);
+        
+        if (this.currentUserId) {
+            console.log(`✅ タスクマネージャー - ユーザーID設定完了: ${this.currentUserId}`);
+        } else {
+            console.warn('⚠️ タスクマネージャー - ユーザーIDが設定されませんでした');
+        }
     }
     
     // タスクの追加
     async addTask(taskData) {
+        if (!this.currentUserId) {
+            console.error('❌ ユーザーがログインしていません');
+            throw new Error('ユーザーがログインしていません');
+        }
+        
+        console.log(`➕ 新規タスク追加 - ユーザーID: ${this.currentUserId}`);
+        console.log(`➕ タスクデータ:`, taskData);
+        
         const task = {
             id: this.generateTaskId(),
+            userId: this.currentUserId, // ユーザーIDを追加
             title: taskData.title,
             description: taskData.description || '',
             priority: parseInt(taskData.priority) || 3,
@@ -26,8 +49,12 @@ class TaskManager {
             updatedAt: Date.now()
         };
         
+        console.log(`✅ 作成されたタスク:`, task);
+        
         this.tasks.push(task);
         await this.storage.saveTask(task);
+        
+        console.log(`📋 タスク追加完了 - 総タスク数: ${this.tasks.length}件`);
         return task;
     }
     
@@ -55,12 +82,12 @@ class TaskManager {
     
     // タスクの取得
     getTask(taskId) {
-        return this.tasks.find(t => t.id === taskId);
+        return this.tasks.find(t => t.id === taskId && t.userId === this.currentUserId);
     }
     
     // 全タスクの取得
     getAllTasks() {
-        return this.tasks;
+        return this.tasks.filter(t => t.userId === this.currentUserId);
     }
     
     // フォーカスタスクの取得
@@ -116,7 +143,7 @@ class TaskManager {
             
             const dayTasks = this.tasks.filter(t => {
                 const taskDate = new Date(t.completedAt || t.createdAt).toISOString().split('T')[0];
-                return taskDate === dateStr && t.status === 'completed';
+                return taskDate === dateStr && t.status === 'completed' && t.userId === this.currentUserId;
             });
             
             if (dayTasks.length > 0) {
@@ -128,7 +155,42 @@ class TaskManager {
         
         return streak;
     }
+    
+    // タスクの読み込み
+    async loadTasks() {
+        try {
+            console.log(`📋 タスク読み込み開始 - ユーザーID: ${this.currentUserId}`);
+            
+            if (!this.currentUserId) {
+                console.warn('⚠️ ユーザーIDが設定されていないため、タスクを読み込めません');
+                this.tasks = [];
+                return;
+            }
+            
+            const allTasks = await this.storage.getAllTasks();
+            console.log(`📂 ストレージから取得したタスク数: ${allTasks.length}件`);
+            
+            // 現在のユーザーのタスクのみをフィルタリング
+            this.tasks = allTasks.filter(task => {
+                const isUserTask = task.userId === this.currentUserId;
+                console.log(`🔍 タスクチェック: ${task.title} - userId: ${task.userId}, currentUserId: ${this.currentUserId}, match: ${isUserTask}`);
+                return isUserTask;
+            });
+            
+            console.log(`📋 ユーザー ${this.currentUserId} のタスクを読み込み: ${this.tasks.length}件`);
+            
+            // デバッグ: 読み込まれたタスクの詳細
+            this.tasks.forEach((task, index) => {
+                console.log(`📝 タスク${index + 1}: ${task.title} (ID: ${task.id}, userId: ${task.userId})`);
+            });
+            
+        } catch (error) {
+            console.error('❌ タスク読み込みエラー:', error);
+            this.tasks = [];
+        }
+    }
 }
 
 // グローバルに公開
 window.TaskManager = TaskManager;
+

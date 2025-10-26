@@ -144,3 +144,4 @@ class MindmapManager {
 
 // グローバルに公開
 window.MindmapManager = MindmapManager;
+

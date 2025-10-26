@@ -139,6 +139,93 @@
     text-align: center;
 }
 
+/* 今日のタスクリスト */
+.today-tasks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.today-task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+    margin-bottom: 8px;
+}
+
+.today-task-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.task-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.task-check {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.task-title {
+    font-weight: 500;
+    font-size: 1rem;
+    color: white;
+    flex: 1;
+}
+
+.task-check:checked + .task-title {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.task-actions-dash {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.btn-move-up,
+.btn-move-down {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+    min-width: 35px;
+}
+
+.btn-move-up:hover,
+.btn-move-down:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.no-move-buttons {
+    width: 35px;
+}
+
+.no-tasks {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    font-style: italic;
+}
+
 /* チャートカード */
 .chart-card {
     grid-column: span 2;
@@ -433,3 +520,4 @@
         gap: 5px;
     }
 }
+

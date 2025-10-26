@@ -1,18 +1,35 @@
 /* タスク管理スタイル */
 .task-filters {
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     margin-bottom: 20px;
     padding: 15px;
     background: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
+    align-items: center;
+}
+
+.task-filters .btn {
+    flex-shrink: 0;
+}
+
+.task-filters .filter-select {
+    flex: 1;
+    min-width: 150px;
 }
 
 .task-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .task-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .task-card {
@@ -22,6 +39,9 @@
     box-shadow: var(--shadow);
     transition: var(--transition);
     border-left: 4px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
 }
 
 .task-card:hover {
@@ -92,8 +112,10 @@
 .task-controls {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 15px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .task-checkbox {
@@ -170,13 +192,89 @@
 
 .task-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: auto;
 }
 
 .task-actions .btn {
     font-size: 0.8rem;
     padding: 6px 12px;
+}
+
+/* タスクセクション */
+.task-section {
+    margin-bottom: 30px;
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-header h3 i {
+    font-size: 1rem;
+}
+
+.task-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* 今日のタスクセクション */
+#today-tasks-section .section-header {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+}
+
+/* 明日のタスクセクション */
+#tomorrow-tasks-section .section-header {
+    background: linear-gradient(135deg, #2196f3, #42a5f5);
+}
+
+/* その他のタスクセクション */
+#other-tasks-section .section-header {
+    background: linear-gradient(135deg, #9e9e9e, #bdbdbd);
+}
+
+/* 空の状態 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1rem;
+    font-style: italic;
 }
 
 .task-priority {

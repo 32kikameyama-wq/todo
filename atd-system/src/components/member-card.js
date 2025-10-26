@@ -71,3 +71,4 @@ class MemberCard {
 
 // グローバルに公開
 window.MemberCard = MemberCard;
+
