@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMLサンプル - ATDシステム</title>
+    <link rel="stylesheet" href="../styles/example.css">
+</head>
+<body>
+    <header>
+        <h1>HTML + CSS + JavaScript サンプル</h1>
+    </header>
+    
+    <main>
+        <section id="demo-section">
+            <h2>インタラクティブなデモ</h2>
+            
+            <div class="demo-card">
+                <h3>カウンター</h3>
+                <div class="counter-container">
+                    <button id="decrement-btn" class="btn">-</button>
+                    <span id="counter-value">0</span>
+                    <button id="increment-btn" class="btn">+</button>
+                </div>
+            </div>
+            
+            <div class="demo-card">
+                <h3>フォーム例</h3>
+                <form id="demo-form">
+                    <div class="form-group">
+                        <label for="name-input">名前</label>
+                        <input type="text" id="name-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-input">メール</label>
+                        <input type="email" id="email-input" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">送信</button>
+                </form>
+                <div id="form-result"></div>
+            </div>
+            
+            <div class="demo-card">
+                <h3>動的リスト</h3>
+                <input type="text" id="item-input" placeholder="アイテムを入力">
+                <button id="add-item-btn" class="btn btn-primary">追加</button>
+                <ul id="item-list"></ul>
+            </div>
+        </section>
+    </main>
+    
+    <script src="example.js"></script>
+</body>
+</html>
