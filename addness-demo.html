@@ -21,7 +21,7 @@
         <div class="addness-header-content">
             <div class="addness-logo">
                 <i class="fas fa-tasks"></i>
-                <span>ATD - Action Task Dashboard</span>
+                <span>ATD</span>
             </div>
             <nav class="addness-nav">
                 <a href="#" class="addness-nav-item active">
@@ -42,7 +42,19 @@
 
     <!-- メインコンテンツ -->
     <main style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">
-        <!-- 統計カードセクション -->
+        <!-- 個人/チーム切り替えタブ -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--addness-border);">
+            <button class="view-tab active" data-view="personal" style="background: none; border: none; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; color: var(--addness-text-secondary); cursor: pointer; border-bottom: 3px solid transparent; transition: var(--addness-transition);">
+                <i class="fas fa-user"></i> 個人
+            </button>
+            <button class="view-tab" data-view="team" style="background: none; border: none; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; color: var(--addness-text-secondary); cursor: pointer; border-bottom: 3px solid transparent; transition: var(--addness-transition);">
+                <i class="fas fa-users"></i> チーム
+            </button>
+        </div>
+
+        <!-- 個人ビュー -->
+        <div id="personal-view" class="view-content">
+            <!-- 統計カードセクション -->
         <section style="margin-bottom: 3rem;">
             <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">統計ダッシュボード</h2>
             <div class="addness-grid addness-grid-4">
@@ -199,6 +211,149 @@
                 </div>
             </div>
         </section>
+        </div>
+
+        <!-- チームビュー -->
+        <div id="team-view" class="view-content hidden">
+            <!-- チーム統計カードセクション -->
+            <section style="margin-bottom: 3rem;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">チーム統計</h2>
+                <div class="addness-grid addness-grid-4">
+                    <div class="addness-stat-card">
+                        <div class="addness-stat-value">85%</div>
+                        <div class="addness-stat-label">チーム完了率</div>
+                    </div>
+                    <div class="addness-stat-card" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                        <div class="addness-stat-value">24</div>
+                        <div class="addness-stat-label">アクティブメンバー</div>
+                    </div>
+                    <div class="addness-stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+                        <div class="addness-stat-value">156</div>
+                        <div class="addness-stat-label">完了タスク</div>
+                    </div>
+                    <div class="addness-stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                        <div class="addness-stat-value">18</div>
+                        <div class="addness-stat-label">進行中タスク</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- チームタスクセクション -->
+            <section style="margin-bottom: 3rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--addness-text-primary); margin: 0;">チームタスク</h2>
+                    <button class="addness-btn addness-btn-primary">
+                        <i class="fas fa-plus"></i> タスク割り当て
+                    </button>
+                </div>
+                
+                <!-- チームタスクカード -->
+                <div class="addness-task-card priority-high">
+                    <div class="addness-task-title">📊 四半期売上レポート作成</div>
+                    <div class="addness-task-meta">
+                        <span><i class="fas fa-calendar"></i> 2024/01/20</span>
+                        <span class="addness-task-badge status-progress">進行中</span>
+                        <span><i class="fas fa-users"></i> 営業チーム</span>
+                        <span><i class="fas fa-user"></i> 担当: 山田 太郎</span>
+                    </div>
+                </div>
+
+                <div class="addness-task-card priority-medium">
+                    <div class="addness-task-title">🎨 新商品パッケージデザイン</div>
+                    <div class="addness-task-meta">
+                        <span><i class="fas fa-calendar"></i> 2024/01/25</span>
+                        <span class="addness-task-badge status-pending">未着手</span>
+                        <span><i class="fas fa-users"></i> デザインチーム</span>
+                        <span><i class="fas fa-user"></i> 担当: 佐藤 花子</span>
+                    </div>
+                </div>
+
+                <div class="addness-task-card priority-low">
+                    <div class="addness-task-title">📝 プロジェクト計画書のレビュー</div>
+                    <div class="addness-task-meta">
+                        <span><i class="fas fa-calendar"></i> 2024/01/22</span>
+                        <span class="addness-task-badge status-completed">完了</span>
+                        <span><i class="fas fa-users"></i> プロジェクトチーム</span>
+                        <span><i class="fas fa-user"></i> 担当: 鈴木 一郎</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- チームメンバーセクション -->
+            <section style="margin-bottom: 3rem;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">チームメンバー</h2>
+                <div class="addness-grid addness-grid-3">
+                    <div class="addness-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--addness-primary) 0%, var(--addness-primary-dark) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">
+                                山
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; color: var(--addness-text-primary);">山田 太郎</h4>
+                                <p style="margin: 0; color: var(--addness-text-secondary); font-size: 0.875rem;">プロジェクトマネージャー</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="addness-task-badge" style="background: var(--addness-success); color: white;">進行中: 5</span>
+                            <span class="addness-task-badge" style="background: var(--addness-primary); color: white;">完了: 12</span>
+                        </div>
+                    </div>
+
+                    <div class="addness-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--addness-accent) 0%, #2980b9 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">
+                                佐
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; color: var(--addness-text-primary);">佐藤 花子</h4>
+                                <p style="margin: 0; color: var(--addness-text-secondary); font-size: 0.875rem;">デザイナー</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="addness-task-badge" style="background: var(--addness-warning); color: white;">進行中: 3</span>
+                            <span class="addness-task-badge" style="background: var(--addness-accent); color: white;">完了: 8</span>
+                        </div>
+                    </div>
+
+                    <div class="addness-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--addness-success) 0%, #229954 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 600;">
+                                鈴
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; color: var(--addness-text-primary);">鈴木 一郎</h4>
+                                <p style="margin: 0; color: var(--addness-text-secondary); font-size: 0.875rem;">エンジニア</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="addness-task-badge" style="background: var(--addness-danger); color: white;">進行中: 2</span>
+                            <span class="addness-task-badge" style="background: var(--addness-success); color: white;">完了: 15</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- チームマインドマップ -->
+            <section style="margin-bottom: 3rem;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">チームマインドマップ</h2>
+                <div class="addness-card">
+                    <div class="addness-card-body">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.5rem 0; color: var(--addness-text-primary);">四半期目標達成</h4>
+                                <div style="width: 100%; height: 8px; background: var(--addness-border); border-radius: 4px; overflow: hidden;">
+                                    <div style="width: 75%; height: 100%; background: linear-gradient(90deg, var(--addness-primary), var(--addness-primary-light)); transition: width 0.3s;"></div>
+                                </div>
+                                <p style="margin: 0.5rem 0 0 0; color: var(--addness-text-secondary); font-size: 0.875rem;">進捗: 75%</p>
+                            </div>
+                        </div>
+                        <button class="addness-btn addness-btn-primary" style="width: 100%;">
+                            <i class="fas fa-project-diagram"></i> マインドマップを開く
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- フッター -->
@@ -207,6 +362,30 @@
     </footer>
 
     <script>
+        // 個人/チーム切り替え
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // タブの切り替え
+                document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // ビューの切り替え
+                const viewType = this.dataset.view;
+                document.querySelectorAll('.view-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(viewType + '-view').classList.remove('hidden');
+                
+                // タブのスタイル更新
+                document.querySelectorAll('.view-tab').forEach(t => {
+                    t.style.borderBottom = '3px solid transparent';
+                    t.style.color = 'var(--addness-text-secondary)';
+                });
+                this.style.borderBottom = '3px solid var(--addness-primary)';
+                this.style.color = 'var(--addness-primary)';
+            });
+        });
+
         // ナビゲーションのアクティブ状態切り替え
         document.querySelectorAll('.addness-nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
