@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATD - AddNeSSテーマデモ</title>
+    <link rel="stylesheet" href="atd-system/src/styles/addness-theme.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--addness-bg-secondary);
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="addness-header">
+        <div class="addness-header-content">
+            <div class="addness-logo">
+                <i class="fas fa-tasks"></i>
+                <span>ATD - Action Task Dashboard</span>
+            </div>
+            <nav class="addness-nav">
+                <a href="#" class="addness-nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> ダッシュボード
+                </a>
+                <a href="#" class="addness-nav-item">
+                    <i class="fas fa-tasks"></i> タスク
+                </a>
+                <a href="#" class="addness-nav-item">
+                    <i class="fas fa-users"></i> チーム
+                </a>
+                <a href="#" class="addness-nav-item">
+                    <i class="fas fa-project-diagram"></i> マインドマップ
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">
+        <!-- 統計カードセクション -->
+        <section style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">統計ダッシュボード</h2>
+            <div class="addness-grid addness-grid-4">
+                <div class="addness-stat-card">
+                    <div class="addness-stat-value">45</div>
+                    <div class="addness-stat-label">完了タスク</div>
+                </div>
+                <div class="addness-stat-card" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                    <div class="addness-stat-value">78%</div>
+                    <div class="addness-stat-label">完了率</div>
+                </div>
+                <div class="addness-stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+                    <div class="addness-stat-value">12日</div>
+                    <div class="addness-stat-label">連続達成</div>
+                </div>
+                <div class="addness-stat-card" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                    <div class="addness-stat-value">2.3日</div>
+                    <div class="addness-stat-label">平均時間</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 今日のタスクセクション -->
+        <section style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="color: var(--addness-text-primary); margin: 0;">今日のタスク</h2>
+                <button class="addness-btn addness-btn-primary">
+                    <i class="fas fa-plus"></i> タスク追加
+                </button>
+            </div>
+            
+            <!-- タスクカード -->
+            <div class="addness-task-card priority-high">
+                <div class="addness-task-title">重要タスク: プロジェクト提案書の作成</div>
+                <div class="addness-task-meta">
+                    <span><i class="fas fa-calendar"></i> 2024/01/15</span>
+                    <span class="addness-task-badge status-progress">進行中</span>
+                    <span><i class="fas fa-user"></i> 山田 太郎</span>
+                </div>
+            </div>
+
+            <div class="addness-task-card priority-medium">
+                <div class="addness-task-title">ミーティングの準備</div>
+                <div class="addness-task-meta">
+                    <span><i class="fas fa-calendar"></i> 2024/01/15</span>
+                    <span class="addness-task-badge status-pending">未着手</span>
+                    <span><i class="fas fa-user"></i> 佐藤 花子</span>
+                </div>
+            </div>
+
+            <div class="addness-task-card priority-low">
+                <div class="addness-task-title">書類の整理</div>
+                <div class="addness-task-meta">
+                    <span><i class="fas fa-calendar"></i> 2024/01/20</span>
+                    <span class="addness-task-badge status-completed">完了</span>
+                    <span><i class="fas fa-user"></i> 鈴木 一郎</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- カードグリッドセクション -->
+        <section style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">機能カード</h2>
+            <div class="addness-grid addness-grid-3">
+                <div class="addness-card">
+                    <div class="addness-card-header">
+                        <h3 class="addness-card-title">
+                            <i class="fas fa-project-diagram" style="color: var(--addness-primary);"></i>
+                            マインドマップ
+                        </h3>
+                    </div>
+                    <div class="addness-card-body">
+                        <p>目標とタスクを可視化して、効率的に作業を進めます。</p>
+                        <button class="addness-btn addness-btn-primary" style="margin-top: 1rem; width: 100%;">
+                            開く
+                        </button>
+                    </div>
+                </div>
+
+                <div class="addness-card">
+                    <div class="addness-card-header">
+                        <h3 class="addness-card-title">
+                            <i class="fas fa-users" style="color: var(--addness-accent);"></i>
+                            チーム管理
+                        </h3>
+                    </div>
+                    <div class="addness-card-body">
+                        <p>チームメンバーと協力して、プロジェクトを成功させます。</p>
+                        <button class="addness-btn addness-btn-accent" style="margin-top: 1rem; width: 100%;">
+                            開く
+                        </button>
+                    </div>
+                </div>
+
+                <div class="addness-card">
+                    <div class="addness-card-header">
+                        <h3 class="addness-card-title">
+                            <i class="fas fa-chart-line" style="color: var(--addness-success);"></i>
+                            進捗分析
+                        </h3>
+                    </div>
+                    <div class="addness-card-body">
+                        <p>タスクの進捗状況をグラフで確認できます。</p>
+                        <button class="addness-btn addness-btn-secondary" style="margin-top: 1rem; width: 100%;">
+                            開く
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- フォームセクション -->
+        <section style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--addness-text-primary);">タスク作成フォーム</h2>
+            <div class="addness-card" style="max-width: 600px;">
+                <div class="addness-card-header">
+                    <h3 class="addness-card-title">新しいタスクを追加</h3>
+                </div>
+                <div class="addness-card-body">
+                    <form class="addness-form">
+                        <div class="addness-form-group">
+                            <label class="addness-form-label">タスク名</label>
+                            <input type="text" class="addness-form-input" placeholder="タスク名を入力">
+                        </div>
+                        
+                        <div class="addness-form-group">
+                            <label class="addness-form-label">説明</label>
+                            <textarea class="addness-form-input addness-form-textarea" placeholder="詳細を入力"></textarea>
+                        </div>
+                        
+                        <div class="addness-form-group">
+                            <label class="addness-form-label">期限</label>
+                            <input type="date" class="addness-form-input">
+                        </div>
+                        
+                        <div class="addness-form-group">
+                            <label class="addness-form-label">優先度</label>
+                            <select class="addness-form-input">
+                                <option>低</option>
+                                <option>中</option>
+                                <option>高</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="addness-btn addness-btn-primary" style="flex: 1;">
+                                <i class="fas fa-save"></i> 保存
+                            </button>
+                            <button type="button" class="addness-btn addness-btn-secondary" style="flex: 1;">
+                                <i class="fas fa-times"></i> キャンセル
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer style="background: var(--addness-bg-dark); color: var(--addness-text-white); padding: 2rem; text-align: center; margin-top: 4rem;">
+        <p>© 2024 ATD - Action Task Dashboard. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ナビゲーションのアクティブ状態切り替え
+        document.querySelectorAll('.addness-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.addness-nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // カードアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('addness-fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.addness-card, .addness-task-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
