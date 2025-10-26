@@ -22,6 +22,9 @@ class ATDApp {
         // タスクマネージャーを初期化
         this.taskManager = new TaskManager();
         
+        // ビューマネージャーを初期化
+        this.viewManager = new ViewManager();
+        
         this.init();
     }
     
@@ -40,6 +43,14 @@ class ATDApp {
             
             // 既存のセッションを復元
             this.restoreSession();
+            
+            // ビューマネージャーを初期化
+            this.viewManager.initialize();
+            
+            // ビューの変更リスナーを設定
+            this.viewManager.addListener((newView, previousView) => {
+                this.onViewChange(newView, previousView);
+            });
             
             // UIイベントリスナーを設定
             this.setupEventListeners();
@@ -113,6 +124,44 @@ class ATDApp {
         
         // UIを更新
         this.updateUI();
+    }
+    
+    // ビュー変更時の処理
+    onViewChange(newView, previousView) {
+        console.log(`🔄 ビュー変更: ${previousView} → ${newView}`);
+        
+        // 現在のビューモードを更新
+        this.currentViewMode = newView;
+        
+        // ビューに応じたデータを再読み込み
+        this.refreshCurrentView();
+        
+        // ページコンテンツを更新
+        this.updatePageContent();
+    }
+    
+    // 現在のビューを更新
+    async refreshCurrentView() {
+        console.log(`📊 ビュー更新: ${this.currentViewMode}`);
+        
+        // ダッシュボードページの場合
+        if (document.getElementById('dashboard-page')?.classList.contains('active')) {
+            if (window.dashboardPage) {
+                await window.dashboardPage.updateView(this.currentViewMode);
+            }
+        }
+        
+        // タスクページの場合
+        if (document.getElementById('tasks-page')?.classList.contains('active')) {
+            this.updateTaskDisplay();
+        }
+        
+        // チームページの場合
+        if (document.getElementById('team-page')?.classList.contains('active')) {
+            if (window.teamPage) {
+                await window.teamPage.updateView(this.currentViewMode);
+            }
+        }
     }
     
     // ユーザーログイン時の処理
