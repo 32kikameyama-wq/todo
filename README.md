@@ -69,7 +69,7 @@ python3 -m http.server 8000
 
 ### 4. アプリケーションにアクセス
 
-- **Flaskサーバー**: http://localhost:5000
+- **Flaskサーバー**: http://localhost:5001
 - **HTTPサーバー**: http://localhost:8000
 
 ## 📂 プロジェクト構造

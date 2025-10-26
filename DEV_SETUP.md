@@ -54,7 +54,7 @@ python3 -m http.server 8000
 python app.py
 ```
 
-ブラウザで `http://localhost:5000` にアクセス
+ブラウザで `http://localhost:5001` にアクセス
 
 ### 4. サンプルコードの実行
 
@@ -176,6 +176,17 @@ GET /api/stats          # 統計情報取得
 python3 -m http.server 8080
 # または
 PORT=8080 python app.py
+
+### ポート5000が使用中の場合（macOS）
+
+macOSではポート5000がAirPlay Receiverで使用されています。以下の方法で解決できます：
+
+1. **システム設定でAirPlayを無効化**:
+   - システム設定 > 一般 > AirDropとHandoff
+   - AirPlay Receiverをオフにする
+
+2. **または別のポートを使用**:
+   - デフォルトでポート5001を使用するように変更済み
 ```
 
 ### 仮想環境が認識されない

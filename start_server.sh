@@ -19,7 +19,7 @@ fi
 # サーバーの起動
 echo ""
 echo "サーバー起動オプション:"
-echo "1) Flaskサーバー (API機能付き) - http://localhost:5000"
+echo "1) Flaskサーバー (API機能付き) - http://localhost:5001"
 echo "2) Python HTTPサーバー - http://localhost:8000"
 echo ""
 read -p "選択してください (1 または 2): " choice
