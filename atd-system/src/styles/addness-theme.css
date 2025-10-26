@@ -1,0 +1,390 @@
+/* AddNeSS Inspired Theme for ATD System */
+
+:root {
+    /* AddNeSS カラーパレット */
+    --addness-primary: #008b8b; /* Dark Cyan */
+    --addness-primary-dark: #006969;
+    --addness-primary-light: #00b4b4;
+    --addness-secondary: #2c3e50;
+    --addness-accent: #3498db;
+    --addness-success: #27ae60;
+    --addness-warning: #f39c12;
+    --addness-danger: #e74c3c;
+    
+    /* 背景色 */
+    --addness-bg-primary: #ffffff;
+    --addness-bg-secondary: #f8f9fa;
+    --addness-bg-dark: #2c3e50;
+    
+    /* テキスト色 */
+    --addness-text-primary: #2c3e50;
+    --addness-text-secondary: #7f8c8d;
+    --addness-text-light: #bdc3c7;
+    --addness-text-white: #ffffff;
+    
+    /* 境界線 */
+    --addness-border: #e0e0e0;
+    --addness-border-dark: #bdc3c7;
+    
+    /* 影 */
+    --addness-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --addness-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --addness-shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+    
+    /* 角丸 */
+    --addness-radius: 8px;
+    --addness-radius-sm: 4px;
+    --addness-radius-lg: 12px;
+    
+    /* トランジション */
+    --addness-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* AddNeSS風ヘッダー */
+.addness-header {
+    background: linear-gradient(135deg, var(--addness-primary) 0%, var(--addness-primary-dark) 100%);
+    color: var(--addness-text-white);
+    padding: 1rem 2rem;
+    box-shadow: var(--addness-shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.addness-header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.addness-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.addness-nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.addness-nav-item {
+    color: var(--addness-text-white);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--addness-radius-sm);
+    transition: var(--addness-transition);
+}
+
+.addness-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.addness-nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* AddNeSS風カード */
+.addness-card {
+    background: var(--addness-bg-primary);
+    border-radius: var(--addness-radius);
+    box-shadow: var(--addness-shadow-sm);
+    padding: 1.5rem;
+    transition: var(--addness-transition);
+}
+
+.addness-card:hover {
+    box-shadow: var(--addness-shadow-md);
+}
+
+.addness-card-header {
+    border-bottom: 1px solid var(--addness-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.addness-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--addness-text-primary);
+    margin: 0;
+}
+
+.addness-card-body {
+    color: var(--addness-text-secondary);
+}
+
+/* AddNeSS風ボタン */
+.addness-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--addness-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--addness-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.addness-btn-primary {
+    background: var(--addness-primary);
+    color: var(--addness-text-white);
+}
+
+.addness-btn-primary:hover {
+    background: var(--addness-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--addness-shadow-md);
+}
+
+.addness-btn-secondary {
+    background: var(--addness-bg-secondary);
+    color: var(--addness-text-primary);
+    border: 1px solid var(--addness-border);
+}
+
+.addness-btn-secondary:hover {
+    background: var(--addness-border);
+}
+
+.addness-btn-accent {
+    background: var(--addness-accent);
+    color: var(--addness-text-white);
+}
+
+.addness-btn-accent:hover {
+    background: #2980b9;
+}
+
+/* AddNeSS風タスクカード */
+.addness-task-card {
+    background: var(--addness-bg-primary);
+    border-left: 4px solid var(--addness-primary);
+    border-radius: var(--addness-radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--addness-shadow-sm);
+    transition: var(--addness-transition);
+    cursor: pointer;
+}
+
+.addness-task-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--addness-shadow-md);
+}
+
+.addness-task-card.priority-high {
+    border-left-color: var(--addness-danger);
+}
+
+.addness-task-card.priority-medium {
+    border-left-color: var(--addness-warning);
+}
+
+.addness-task-card.priority-low {
+    border-left-color: var(--addness-success);
+}
+
+.addness-task-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--addness-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.addness-task-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--addness-text-secondary);
+}
+
+.addness-task-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.addness-task-badge.status-pending {
+    background: var(--addness-warning);
+    color: white;
+}
+
+.addness-task-badge.status-progress {
+    background: var(--addness-accent);
+    color: white;
+}
+
+.addness-task-badge.status-completed {
+    background: var(--addness-success);
+    color: white;
+}
+
+/* AddNeSS風統計カード */
+.addness-stat-card {
+    background: linear-gradient(135deg, var(--addness-primary) 0%, var(--addness-primary-dark) 100%);
+    color: var(--addness-text-white);
+    border-radius: var(--addness-radius);
+    padding: 1.5rem;
+    box-shadow: var(--addness-shadow-md);
+}
+
+.addness-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.addness-stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+/* AddNeSS風フォーム */
+.addness-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.addness-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.addness-form-label {
+    font-weight: 600;
+    color: var(--addness-text-primary);
+    font-size: 0.875rem;
+}
+
+.addness-form-input {
+    padding: 0.75rem;
+    border: 1px solid var(--addness-border);
+    border-radius: var(--addness-radius-sm);
+    font-size: 1rem;
+    transition: var(--addness-transition);
+}
+
+.addness-form-input:focus {
+    outline: none;
+    border-color: var(--addness-primary);
+    box-shadow: 0 0 0 3px rgba(0, 139, 139, 0.1);
+}
+
+.addness-form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* AddNeSS風グリッド */
+.addness-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.addness-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.addness-grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.addness-grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .addness-header {
+        padding: 1rem;
+    }
+    
+    .addness-nav {
+        gap: 1rem;
+    }
+    
+    .addness-grid-2,
+    .addness-grid-3,
+    .addness-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.addness-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.addness-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ユーティリティクラス */
+.addness-text-primary {
+    color: var(--addness-text-primary);
+}
+
+.addness-text-secondary {
+    color: var(--addness-text-secondary);
+}
+
+.addness-text-light {
+    color: var(--addness-text-light);
+}
+
+.addness-text-white {
+    color: var(--addness-text-white);
+}
+
+.addness-bg-primary {
+    background: var(--addness-bg-primary);
+}
+
+.addness-bg-secondary {
+    background: var(--addness-bg-secondary);
+}
+
+.addness-border {
+    border: 1px solid var(--addness-border);
+}
+
+.addness-rounded {
+    border-radius: var(--addness-radius);
+}
+
+.addness-shadow {
+    box-shadow: var(--addness-shadow-md);
+}
