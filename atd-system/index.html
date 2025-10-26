@@ -820,31 +820,27 @@
                     </div>
                 </div>
 
-                <!-- タスク管理ページ -->
-                <div id="tasks-page" class="page">
+                <!-- タスク管理ページ - 個人ビュー -->
+                <div id="tasks-page" class="page" data-view="personal">
                     <div class="page-header">
-                        <h2>タスク管理</h2>
+                        <h2>📋 個人タスク管理</h2>
                         <div class="page-actions">
-                            <button id="mindmap-breakdown-btn" class="btn btn-secondary">
-                                <i class="fas fa-project-diagram"></i>
-                                マインドマップ細分化
+                            <button id="add-task-btn" class="addness-btn addness-btn-primary">
+                                <i class="fas fa-plus"></i>
+                                タスク追加
                             </button>
                         </div>
                     </div>
                     
-                    <div class="task-filters">
-                        <button id="add-task-btn" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            タスク追加
-                        </button>
-                        <select id="task-priority-filter" class="filter-select">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <select id="task-priority-filter" class="addness-form-input" style="flex: 1;">
                             <option value="">全ての優先度</option>
                             <option value="1">🔥 最高</option>
                             <option value="2">⚡ 高</option>
                             <option value="3">📝 中</option>
                             <option value="4">📌 低</option>
                         </select>
-                        <select id="task-status-filter" class="filter-select">
+                        <select id="task-status-filter" class="addness-form-input" style="flex: 1;">
                             <option value="">全てのステータス</option>
                             <option value="pending">未着手</option>
                             <option value="in_progress">進行中</option>
@@ -853,35 +849,47 @@
                     </div>
                     
                     <!-- 今日のタスクセクション -->
-                    <div id="today-tasks-section" class="task-section">
-                        <div class="section-header">
-                            <h3><i class="fas fa-calendar-day"></i> 今日のタスク</h3>
-                            <span id="today-tasks-count" class="task-count">0件</span>
+                    <div class="addness-card" style="margin-bottom: 2rem;">
+                        <div class="addness-card-header">
+                            <h3 class="addness-card-title">
+                                <i class="fas fa-calendar-day"></i> 今日のタスク
+                                <span id="today-tasks-count" style="color: var(--addness-primary); font-size: 0.9em; margin-left: 1rem;">0件</span>
+                            </h3>
                         </div>
-                        <div id="today-tasks-list" class="task-list">
-                            <!-- 今日のタスクがここに表示される -->
+                        <div class="addness-card-body">
+                            <div id="today-tasks-list" class="task-list">
+                                <!-- 今日のタスクがここに表示される -->
+                            </div>
                         </div>
                     </div>
                     
                     <!-- 明日のタスクセクション -->
-                    <div id="tomorrow-tasks-section" class="task-section">
-                        <div class="section-header">
-                            <h3><i class="fas fa-calendar-plus"></i> 明日のタスク</h3>
-                            <span id="tomorrow-tasks-count" class="task-count">0件</span>
+                    <div class="addness-card" style="margin-bottom: 2rem;">
+                        <div class="addness-card-header">
+                            <h3 class="addness-card-title">
+                                <i class="fas fa-calendar-plus"></i> 明日のタスク
+                                <span id="tomorrow-tasks-count" style="color: var(--addness-primary); font-size: 0.9em; margin-left: 1rem;">0件</span>
+                            </h3>
                         </div>
-                        <div id="tomorrow-tasks-list" class="task-list">
-                            <!-- 明日のタスクがここに表示される -->
+                        <div class="addness-card-body">
+                            <div id="tomorrow-tasks-list" class="task-list">
+                                <!-- 明日のタスクがここに表示される -->
+                            </div>
                         </div>
                     </div>
                     
                     <!-- その他のタスクセクション -->
-                    <div id="other-tasks-section" class="task-section">
-                        <div class="section-header">
-                            <h3><i class="fas fa-list"></i> その他のタスク</h3>
-                            <span id="other-tasks-count" class="task-count">0件</span>
+                    <div class="addness-card">
+                        <div class="addness-card-header">
+                            <h3 class="addness-card-title">
+                                <i class="fas fa-list"></i> その他のタスク
+                                <span id="other-tasks-count" style="color: var(--addness-primary); font-size: 0.9em; margin-left: 1rem;">0件</span>
+                            </h3>
                         </div>
-                        <div id="task-list" class="task-list">
-                            <!-- その他のタスクがここに表示される -->
+                        <div class="addness-card-body">
+                            <div id="task-list" class="task-list">
+                                <!-- その他のタスクがここに表示される -->
+                            </div>
                         </div>
                     </div>
                 </div>
